@@ -1,37 +1,32 @@
 # Cybersecurity Learning Notes
 
-Personal notes and beginner-friendly guide as I work through cybersecurity fundamentals — from networking basics all the way to actual exploitation and privilege escalation. Written so I can reference specific details quickly, and structured so anyone starting from zero could follow along too.
+Personal notes from my cybersecurity learning journey. Right now the focus is **networking fundamentals (CCNA)**, since almost everything else in security builds on it.
 
-Each file below covers one stage of the roadmap. Quizzes are included at the end of each stage as self-checks — cover the answer, try to answer yourself first, then check.
+The notes are written so I can look things up quickly, and structured so anyone starting from zero can follow along too.
 
-## 📂 Stages
+## 📂 What's in here
 
-- **[Stage 1 — Networking & Linux Fundamentals](./stage1-networking-linux.md)**
-  OSI/TCP-IP model, IP addressing & subnetting, TCP vs UDP, the 3-way handshake, common ports, DNS, Linux file system & permissions, essential commands, basic bash scripting, and netcat/reverse shell fundamentals.
+| File | What it covers |
+| --- | --- |
+| [CCNA-Configuration-Commands.md](CCNA-Configuration-Commands.md) | Cisco IOS / Packet Tracer command reference: basic setup, VLANs, trunking, routing (static + OSPF), DHCP, NAT, ACLs, switch security (port security, DHCP snooping, DAI), SSH, and verification/troubleshooting commands. Includes ready-to-use configuration workflows and a quick reference. |
 
-- **[Stage 2 — Web Fundamentals, Vulnerabilities & Enumeration](./stage2-web-fundamentals.md)**
-  How HTTP/cookies/sessions work, the three core vuln classes (SQL injection, XSS, command injection), enumeration with nmap/gobuster, privilege escalation, two full worked attack-chain walkthroughs, and a legal/authorization primer.
+## 🎯 Current focus
 
-*(More stages will be added as I progress — specialization tracks, certifications, etc.)*
+- Networking at CCNA level: switching, routing, IP services, and network security basics
+- Practical configuration, verification, and troubleshooting rather than theory alone
 
-## 🗺️ The Bigger Roadmap
+More notes will be added here as I progress. Other topics may get their own folders later.
 
-```
-1. Foundations           → networking, Linux, scripting          ✅
-2. Core security concepts → web fundamentals, vuln classes, enum ✅
-3. Offensive practice     → TryHackMe / HackTheBox boxes          🔄 in progress
-4. Specialization         → pentest / OSINT / blue team / AppSec  ⏳
-5. Certifications         → Security+ → eJPT → OSCP                ⏳
-```
+## 📝 Using these notes
+
+- Syntax can vary between IOS versions, device models, and Packet Tracer versions. Use `?` on the actual device to confirm a command.
+- Test configuration in a lab before using it on real equipment.
+- Found a mistake? Open an issue or pull request. Corrections are welcome.
 
 ## ⚖️ A Note on Ethics
 
-Everything here is for learning purposes on authorized targets only — TryHackMe, HackTheBox, or systems I own outright. If you're using this as a reference too: never run any of this against a system without explicit, documented permission from its actual owner. No exceptions.
-
-## 🛠️ Setup
-
-Practicing primarily on Kali Linux (attacker side) with a Windows VM (target side) for cross-platform practice. Hands-on lab work paused temporarily due to limited device access — theory-first learning in the meantime.
+Everything here is for learning purposes on authorized targets and lab environments only. If you use this as a reference too: never run anything against a system without explicit, documented permission from its owner.
 
 ---
 
-*Started: [11 aug 2026] — updated as I go.*
+*Started: 11 Aug 2026 — updated as I go.*
