@@ -1,10 +1,10 @@
 # CCNA Configuration Commands
 
-A practical **Cisco IOS / Cisco Packet Tracer command reference** focused on CCNA-level networking, configuration, verification, and troubleshooting.
+Cisco IOS / Cisco Packet Tracer command reference focused on CCNA-level networking, practical configuration, verification, and troubleshooting.
 
-> **Scope:** CCNA 200-301 v1.1 and closely related Cisco IOS commands useful for labs and networking practice.  
+> **Scope:** CCNA-focused Cisco IOS commands with useful real-world and Packet Tracer configuration examples.  
 > **Platform:** Cisco IOS / Cisco Packet Tracer  
-> **Note:** Command availability may vary between Cisco IOS versions, device models, and Packet Tracer.
+> **Style:** Configuration + verification + troubleshooting
 
 ---
 
@@ -16,7 +16,7 @@ A practical **Cisco IOS / Cisco Packet Tracer command reference** focused on CCN
 4. [IPv4 Configuration](#4-ipv4-configuration)
 5. [IPv6 Configuration](#5-ipv6-configuration)
 6. [VLANs](#6-vlans)
-7. [802.1Q Trunking](#7-8021q-trunking)
+7. [Trunking](#7-trunking)
 8. [Inter-VLAN Routing](#8-inter-vlan-routing)
 9. [CDP and LLDP](#9-cdp-and-lldp)
 10. [EtherChannel and LACP](#10-etherchannel-and-lacp)
@@ -37,34 +37,40 @@ A practical **Cisco IOS / Cisco Packet Tracer command reference** focused on CCN
 25. [Syslog](#25-syslog)
 26. [SNMP](#26-snmp)
 27. [TFTP and Configuration Transfer](#27-tftp-and-configuration-transfer)
-28. [Configuration Management](#28-configuration-management)
-29. [Verification Commands](#29-verification-commands)
-30. [Troubleshooting](#30-troubleshooting)
-31. [Common Configuration Workflows](#31-common-configuration-workflows)
+28. [Device Verification](#28-device-verification)
+29. [Troubleshooting](#29-troubleshooting)
+30. [Common Configuration Workflows](#30-common-configuration-workflows)
+31. [Quick Reference](#31-quick-reference)
 
 ---
 
 # 1. Cisco IOS CLI Basics
 
-## Enter Privileged EXEC Mode
+## Enter privileged EXEC mode
 
 ```text
 enable
 ```
 
-## Enter Global Configuration Mode
+## Enter global configuration mode
 
 ```text
 configure terminal
 ```
 
-## Exit the Current Configuration Mode
+Short form:
+
+```text
+conf t
+```
+
+## Exit the current configuration mode
 
 ```text
 exit
 ```
 
-## Return Directly to Privileged EXEC Mode
+## Return directly to privileged EXEC mode
 
 ```text
 end
@@ -76,10 +82,16 @@ or:
 Ctrl+Z
 ```
 
-## Save the Running Configuration
+## Save the running configuration
 
 ```text
 copy running-config startup-config
+```
+
+Short form:
+
+```text
+copy run start
 ```
 
 Alternative:
@@ -88,88 +100,106 @@ Alternative:
 write memory
 ```
 
-## Display the Running Configuration
+## Display the running configuration
 
 ```text
 show running-config
 ```
 
-## Display the Startup Configuration
+Short form:
+
+```text
+show run
+```
+
+## Display the startup configuration
 
 ```text
 show startup-config
 ```
 
-## Display IOS and Hardware Information
+Short form:
+
+```text
+show start
+```
+
+## Display IOS and device information
 
 ```text
 show version
 ```
 
-## Display Available Commands
+## Display available commands
 
 ```text
 ?
 ```
 
-## Display Available Commands at a Specific Level
+## Display commands beginning with a specific word
 
 ```text
 show ?
 ```
 
-## Command Completion
-
-Press:
-
-```text
-TAB
-```
-
-## Repeat Previous Commands
-
-Use:
-
-```text
-Up Arrow
-```
-
-## Display Command History
+## Display previously entered commands
 
 ```text
 show history
 ```
 
-## Cancel a Command
+## Useful CLI shortcuts
+
+```text
+Tab
+```
+
+Auto-completes a command.
+
+```text
+?
+```
+
+Displays available commands or parameters.
 
 ```text
 Ctrl+C
 ```
 
+Cancels the current command or operation.
+
+```text
+Up Arrow
+```
+
+Recalls the previous command.
+
 ---
 
 # 2. Basic Device Configuration
 
-## Set the Hostname
+## Set the hostname
 
 ```text
 configure terminal
 hostname R1
 ```
 
-Example:
+Example prompt:
 
 ```text
 R1(config)#
 ```
 
-## Configure the Privileged EXEC Password
+## Configure the privileged EXEC password
+
+Use `enable secret` rather than the older `enable password`.
 
 ```text
 enable secret MyPassword
 ```
 
-## Configure the Console Password
+## Configure the console password
 
 ```text
 line console 0
@@ -178,7 +208,7 @@ login
 exit
 ```
 
-## Configure VTY Password Authentication
+## Configure VTY access
 
 ```text
 line vty 0 4
@@ -187,120 +217,140 @@ login
 exit
 ```
 
-## Configure a Local User
+Some devices support additional VTY lines:
 
 ```text
-username admin privilege 15 secret MyPassword
+line vty 0 15
 ```
 
-## Disable DNS Lookup
+## Configure a local username
 
-Useful when an incorrectly typed command should not be interpreted as a hostname.
+```text
+username admin secret MyPassword
+```
+
+## Disable DNS lookup
+
+Useful in labs so IOS does not interpret mistyped commands as hostnames.
 
 ```text
 no ip domain lookup
 ```
 
-## Configure a Domain Name
+## Configure a domain name
+
+Required for RSA key generation when configuring SSH.
 
 ```text
 ip domain name example.local
 ```
 
-## Configure a Message-of-the-Day Banner
+## Configure a login banner
 
 ```text
 banner motd #Unauthorized access prohibited#
 ```
 
-## Configure an Interface Description
+## Configure an encrypted enable password
 
 ```text
-interface gigabitEthernet 0/0
-description Connection_to_R2
+enable secret MySecretPassword
+```
+
+## Encrypt plaintext line passwords
+
+```text
+service password-encryption
 ```
 
 ---
 
 # 3. Interface Configuration
 
-## Enter an Interface
+## Enter an interface
 
 ```text
 interface gigabitEthernet 0/0
 ```
 
-Other examples:
+Short form:
 
 ```text
-interface fastEthernet 0/1
+interface g0/0
 ```
+
+## Add a description
 
 ```text
-interface serial 0/0/0
+description Connection_to_R2
 ```
 
-## Enable an Interface
+## Enable an interface
 
 ```text
 no shutdown
 ```
 
-## Disable an Interface
+## Disable an interface
 
 ```text
 shutdown
 ```
 
-## Configure a Description
-
-```text
-description Connection_to_Switch1
-```
-
-## Configure Multiple Interfaces
+## Configure multiple interfaces at once
 
 ```text
 interface range gigabitEthernet 0/1-4
 ```
 
-or:
+Example:
 
 ```text
-interface range fastEthernet 0/1-10
+interface range gigabitEthernet 0/1-10
+shutdown
 ```
 
-## Return an Interface to Its Default Configuration
+## Reset an interface to default settings
 
 ```text
 default interface gigabitEthernet 0/1
 ```
 
-## Verify Interfaces
+## Verify interface status
 
 ```text
 show ip interface brief
 ```
 
+## Display detailed interface information
+
 ```text
 show interfaces
 ```
+
+## Display one specific interface
 
 ```text
 show interfaces gigabitEthernet 0/0
 ```
 
-## Display an Interface's Configuration
+## Display the configured interface section
 
 ```text
 show running-config interface gigabitEthernet 0/0
+```
+
+## Check Layer 3 interface status
+
+```text
+show ip interface gigabitEthernet 0/0
 ```
 
 ---
 
 # 4. IPv4 Configuration
 
-## Configure an IPv4 Address
+## Configure an IPv4 address
 
 ```text
 interface gigabitEthernet 0/0
@@ -308,25 +358,27 @@ ip address 192.168.1.1 255.255.255.0
 no shutdown
 ```
 
-## Configure a Secondary IPv4 Address
+## Configure a secondary IPv4 address
 
 ```text
 ip address 192.168.2.1 255.255.255.0 secondary
 ```
 
-## Remove an IPv4 Address
+## Remove an IPv4 address
 
 ```text
 no ip address
 ```
 
-## Configure a Default Gateway on a Layer 2 Switch
+## Configure a default gateway on a Layer 2 switch
 
 ```text
 ip default-gateway 192.168.1.1
 ```
 
-## Verify IPv4 Addressing
+> On a Layer 3 switch using `ip routing`, routing is handled with routes instead of `ip default-gateway`.
+
+## Verify IPv4 addressing
 
 ```text
 show ip interface brief
@@ -336,13 +388,21 @@ show ip interface brief
 show ip interface
 ```
 
-## Test IPv4 Connectivity
+## Test connectivity
 
 ```text
 ping 192.168.1.1
 ```
 
-## Specify a Source Interface for a Ping
+## Ping from a specific source
+
+```text
+ping
+```
+
+Then specify the source when prompted.
+
+Or, on platforms supporting extended ping:
 
 ```text
 ping 192.168.1.1 source gigabitEthernet 0/0
@@ -352,13 +412,13 @@ ping 192.168.1.1 source gigabitEthernet 0/0
 
 # 5. IPv6 Configuration
 
-## Enable IPv6 Unicast Routing
+## Enable IPv6 routing
 
 ```text
 ipv6 unicast-routing
 ```
 
-## Configure a Global Unicast Address
+## Configure a global unicast address
 
 ```text
 interface gigabitEthernet 0/0
@@ -366,25 +426,25 @@ ipv6 address 2001:DB8:1::1/64
 no shutdown
 ```
 
-## Configure a Link-Local Address
+## Configure a link-local address
 
 ```text
 ipv6 address FE80::1 link-local
 ```
 
-## Configure an Address Using EUI-64
+## Configure an IPv6 address using EUI-64
 
 ```text
 ipv6 address 2001:DB8:1::/64 eui-64
 ```
 
-## Remove an IPv6 Address
+## Remove an IPv6 address
 
 ```text
 no ipv6 address 2001:DB8:1::1/64
 ```
 
-## Verify IPv6 Interfaces
+## Verify IPv6 interfaces
 
 ```text
 show ipv6 interface brief
@@ -394,13 +454,19 @@ show ipv6 interface brief
 show ipv6 interface
 ```
 
-## Test IPv6 Connectivity
+## Display the IPv6 routing table
+
+```text
+show ipv6 route
+```
+
+## Test IPv6 connectivity
 
 ```text
 ping 2001:DB8:1::2
 ```
 
-## Display the IPv6 Neighbor Table
+## Display IPv6 neighbors
 
 ```text
 show ipv6 neighbors
@@ -418,7 +484,7 @@ name SALES
 exit
 ```
 
-## Configure an Access Port
+## Configure an access port
 
 ```text
 interface gigabitEthernet 0/1
@@ -426,7 +492,7 @@ switchport mode access
 switchport access vlan 10
 ```
 
-## Configure Multiple Access Ports
+## Configure multiple access ports
 
 ```text
 interface range gigabitEthernet 0/1-10
@@ -434,10 +500,11 @@ switchport mode access
 switchport access vlan 10
 ```
 
-## Return a Port to VLAN 1
+## Return a port to VLAN 1
 
 ```text
 interface gigabitEthernet 0/1
+switchport mode access
 switchport access vlan 1
 ```
 
@@ -457,13 +524,13 @@ show vlan brief
 show vlan
 ```
 
-## Display a Specific VLAN
+## Display switchport information
 
 ```text
-show vlan id 10
+show interfaces switchport
 ```
 
-## Display Switchport Information
+## Display a specific port's switchport information
 
 ```text
 show interfaces gigabitEthernet 0/1 switchport
@@ -471,57 +538,59 @@ show interfaces gigabitEthernet 0/1 switchport
 
 ---
 
-# 7. 802.1Q Trunking
+# 7. Trunking
 
-## Configure a Trunk
+## Configure a trunk
 
 ```text
 interface gigabitEthernet 0/1
 switchport mode trunk
 ```
 
-## Configure the Native VLAN
+## Configure the native VLAN
 
 ```text
 switchport trunk native vlan 99
 ```
 
-## Configure Allowed VLANs
+## Configure allowed VLANs
 
 ```text
 switchport trunk allowed vlan 10,20,30
 ```
 
-## Add VLANs to the Allowed List
+## Add a VLAN to the allowed list
 
 ```text
 switchport trunk allowed vlan add 40
 ```
 
-## Remove VLANs from the Allowed List
+## Remove a VLAN from the allowed list
 
 ```text
 switchport trunk allowed vlan remove 40
 ```
 
-## Allow All VLANs
+## Allow all VLANs
 
 ```text
 switchport trunk allowed vlan all
 ```
 
-## Verify Trunks
+## Remove the allowed VLAN restriction
+
+```text
+no switchport trunk allowed vlan
+```
+
+## Verify trunks
 
 ```text
 show interfaces trunk
 ```
 
 ```text
-show interfaces gigabitEthernet 0/1 trunk
-```
-
-```text
-show interfaces gigabitEthernet 0/1 switchport
+show interfaces switchport
 ```
 
 ---
@@ -530,14 +599,14 @@ show interfaces gigabitEthernet 0/1 switchport
 
 ## Router-on-a-Stick
 
-Configure the physical interface:
+Configure the physical router interface:
 
 ```text
 interface gigabitEthernet 0/0
 no shutdown
 ```
 
-Configure a VLAN subinterface:
+Configure VLAN 10:
 
 ```text
 interface gigabitEthernet 0/0.10
@@ -545,7 +614,7 @@ encapsulation dot1Q 10
 ip address 192.168.10.1 255.255.255.0
 ```
 
-Another VLAN:
+Configure VLAN 20:
 
 ```text
 interface gigabitEthernet 0/0.20
@@ -553,7 +622,7 @@ encapsulation dot1Q 20
 ip address 192.168.20.1 255.255.255.0
 ```
 
-## Native VLAN Subinterface
+## Native VLAN subinterface
 
 ```text
 interface gigabitEthernet 0/0.99
@@ -561,7 +630,7 @@ encapsulation dot1Q 99 native
 ip address 192.168.99.1 255.255.255.0
 ```
 
-## Configure an SVI
+## SVI on a Layer 3 switch
 
 ```text
 interface vlan 10
@@ -569,13 +638,13 @@ ip address 192.168.10.1 255.255.255.0
 no shutdown
 ```
 
-## Enable Layer 3 Routing on a Multilayer Switch
+## Enable Layer 3 routing on a switch
 
 ```text
 ip routing
 ```
 
-## Configure a Layer 3 Physical Interface
+## Configure a Layer 3 physical interface
 
 ```text
 interface gigabitEthernet 0/1
@@ -584,7 +653,7 @@ ip address 10.0.0.1 255.255.255.252
 no shutdown
 ```
 
-## Configure IPv6 on a Layer 3 Interface
+## Configure IPv6 on a Layer 3 interface
 
 ```text
 interface gigabitEthernet 0/1
@@ -597,41 +666,44 @@ no shutdown
 
 # 9. CDP and LLDP
 
-## Enable CDP Globally
+## Enable CDP globally
 
 ```text
 cdp run
 ```
 
-## Disable CDP Globally
+## Disable CDP globally
 
 ```text
 no cdp run
 ```
 
-## Enable CDP on an Interface
+## Enable CDP on an interface
 
 ```text
 interface gigabitEthernet 0/1
 cdp enable
 ```
 
-## Disable CDP on an Interface
+## Disable CDP on an interface
 
 ```text
-interface gigabitEthernet 0/1
 no cdp enable
 ```
 
-## Verify CDP
+## Verify CDP neighbors
 
 ```text
 show cdp neighbors
 ```
 
+## Display detailed CDP information
+
 ```text
 show cdp neighbors detail
 ```
+
+## Display CDP interface information
 
 ```text
 show cdp interface
@@ -643,7 +715,7 @@ show cdp interface
 lldp run
 ```
 
-## Configure LLDP Transmit and Receive
+## Configure LLDP transmit/receive
 
 ```text
 interface gigabitEthernet 0/1
@@ -676,27 +748,37 @@ interface range gigabitEthernet 0/1-2
 channel-group 1 mode active
 ```
 
-## Configure a Port-Channel as a Trunk
+`active` actively negotiates LACP.
+
+A passive LACP side:
+
+```text
+channel-group 1 mode passive
+```
+
+> At least one side must actively initiate LACP.
+
+## Configure a Port-Channel as a trunk
 
 ```text
 interface port-channel 1
 switchport mode trunk
 ```
 
-## Configure an Access EtherChannel
+## Configure allowed VLANs on the Port-Channel
+
+```text
+interface port-channel 1
+switchport trunk allowed vlan 10,20,30
+```
+
+## Access EtherChannel
 
 ```text
 interface range gigabitEthernet 0/1-2
 switchport mode access
 switchport access vlan 10
 channel-group 1 mode active
-```
-
-## Configure Allowed VLANs on a Port-Channel
-
-```text
-interface port-channel 1
-switchport trunk allowed vlan 10,20,30
 ```
 
 ## Verify EtherChannel
@@ -717,7 +799,7 @@ show etherchannel port-channel
 show interfaces port-channel 1
 ```
 
-## Verify LACP Neighbors
+## Display LACP neighbors
 
 ```text
 show lacp neighbor
@@ -733,31 +815,25 @@ show lacp neighbor
 spanning-tree mode rapid-pvst
 ```
 
-## Configure a Switch as Root Primary
+## Configure a switch as root primary
 
 ```text
 spanning-tree vlan 10 root primary
 ```
 
-## Configure a Switch as Root Secondary
+## Configure a switch as root secondary
 
 ```text
 spanning-tree vlan 10 root secondary
 ```
 
-## Manually Configure STP Priority
-
-Lower values have a higher chance of becoming the root bridge.
+## Explicitly configure STP priority
 
 ```text
-spanning-tree vlan 10 priority 4096
+spanning-tree vlan 10 priority 24576
 ```
 
-## Configure Multiple VLAN Priorities
-
-```text
-spanning-tree vlan 10,20 priority 4096
-```
+Lower priority wins root bridge election.
 
 ## Configure PortFast
 
@@ -766,21 +842,21 @@ interface gigabitEthernet 0/1
 spanning-tree portfast
 ```
 
-## Configure BPDU Guard
+## Enable BPDU Guard
 
 ```text
 interface gigabitEthernet 0/1
 spanning-tree bpduguard enable
 ```
 
-## Configure Root Guard
+## Configure root guard
 
 ```text
 interface gigabitEthernet 0/1
 spanning-tree guard root
 ```
 
-## Configure Loop Guard
+## Configure loop guard
 
 ```text
 interface gigabitEthernet 0/1
@@ -809,81 +885,75 @@ show spanning-tree summary
 
 # 12. Static Routing
 
-## IPv4 Network Route
+## IPv4 network route
 
 ```text
 ip route 192.168.20.0 255.255.255.0 10.0.0.2
 ```
 
-## IPv4 Route Using an Exit Interface
+## Static route using an exit interface
 
 ```text
 ip route 192.168.20.0 255.255.255.0 gigabitEthernet 0/1
 ```
 
-## IPv4 Route Using Next Hop and Exit Interface
+## Static route using next-hop and exit interface
 
 ```text
 ip route 192.168.20.0 255.255.255.0 gigabitEthernet 0/1 10.0.0.2
 ```
 
-## IPv4 Default Route
+## IPv4 default route
 
 ```text
 ip route 0.0.0.0 0.0.0.0 10.0.0.2
 ```
 
-## IPv4 Host Route
+## IPv4 host route
 
 ```text
 ip route 192.168.20.10 255.255.255.255 10.0.0.2
 ```
 
-## Floating Static Route
+## Floating static route
 
-The final value is the administrative distance.
+A higher administrative distance makes it a backup route.
 
 ```text
 ip route 192.168.20.0 255.255.255.0 10.0.0.2 200
 ```
 
-## Remove a Static Route
+## Remove a static route
 
 ```text
 no ip route 192.168.20.0 255.255.255.0 10.0.0.2
 ```
 
-## IPv6 Static Route
+## IPv6 static route
 
 ```text
 ipv6 route 2001:DB8:20::/64 2001:DB8:1::2
 ```
 
-## IPv6 Route Using an Exit Interface
-
-```text
-ipv6 route 2001:DB8:20::/64 gigabitEthernet 0/0
-```
-
-## IPv6 Default Route
+## IPv6 default route
 
 ```text
 ipv6 route ::/0 2001:DB8:1::2
 ```
 
-## IPv6 Host Route
+## IPv6 host route
 
 ```text
 ipv6 route 2001:DB8:20::10/128 2001:DB8:1::2
 ```
 
-## IPv6 Floating Static Route
+## IPv6 floating static route
 
 ```text
 ipv6 route 2001:DB8:20::/64 2001:DB8:1::2 200
 ```
 
-## Verify IPv4 Routing
+## Verify routing
 
 ```text
 show ip route
@@ -892,8 +962,6 @@ show ip route
 ```text
 show ip route static
 ```
-
-## Verify IPv6 Routing
 
 ```text
 show ipv6 route
@@ -913,76 +981,70 @@ show ipv6 route static
 router ospf 1
 ```
 
-## Configure a Router ID
+## Configure a router ID
 
 ```text
-router ospf 1
 router-id 1.1.1.1
 ```
 
-## Advertise a Network
+## Advertise a network
 
 ```text
-router ospf 1
 network 192.168.1.0 0.0.0.255 area 0
 ```
 
-## Configure OSPF Directly on an Interface
+## Configure OSPF directly on an interface
 
 ```text
 interface gigabitEthernet 0/0
 ip ospf 1 area 0
 ```
 
-## Configure a Passive Interface
+## Configure a passive interface
 
 ```text
-router ospf 1
 passive-interface gigabitEthernet 0/1
 ```
 
-## Make All Interfaces Passive
+## Make all interfaces passive
 
 ```text
-router ospf 1
 passive-interface default
 ```
 
-Then allow OSPF on a specific interface:
+## Make a specific interface active again
 
 ```text
 no passive-interface gigabitEthernet 0/0
 ```
 
-## Configure OSPF Interface Cost
+## Configure OSPF cost
 
 ```text
 interface gigabitEthernet 0/0
-ip ospf 1 area 0
 ip ospf cost 10
 ```
 
-## Configure OSPF Interface Priority
+## Configure OSPF interface priority
 
 ```text
 interface gigabitEthernet 0/0
 ip ospf priority 100
 ```
 
-## Advertise a Default Route
+## Advertise a default route through OSPF
 
 ```text
-router ospf 1
 default-information originate
 ```
 
-## Restart the OSPF Process
+## Restart the OSPF process
 
 ```text
 clear ip ospf process
 ```
 
-## Verify OSPF
+## Verify OSPF configuration
 
 ```text
 show ip protocols
@@ -997,10 +1059,6 @@ show ip ospf interface
 ```
 
 ```text
-show ip ospf interface gigabitEthernet 0/0
-```
-
-```text
 show ip ospf neighbor
 ```
 
@@ -1008,15 +1066,11 @@ show ip ospf neighbor
 show ip route ospf
 ```
 
-```text
-show ip route
-```
-
 ---
 
 # 14. DHCP
 
-## Configure an Interface as a DHCP Client
+## Configure an interface as a DHCP client
 
 ```text
 interface gigabitEthernet 0/0
@@ -1024,22 +1078,22 @@ ip address dhcp
 no shutdown
 ```
 
-## Configure a DHCP Relay
+## Configure a DHCP relay
 
 ```text
 interface gigabitEthernet 0/0
 ip helper-address 192.168.1.10
 ```
 
-## Remove a DHCP Relay
+## Remove a DHCP relay
 
 ```text
 no ip helper-address 192.168.1.10
 ```
 
-## Configure a Cisco IOS DHCP Server
+## Configure a DHCP server
 
-Exclude addresses that should not be assigned:
+Exclude addresses:
 
 ```text
 ip dhcp excluded-address 192.168.10.1 192.168.10.20
@@ -1055,43 +1109,49 @@ dns-server 8.8.8.8
 domain-name example.local
 ```
 
-## Configure a DHCP Lease
+## Configure a DHCP lease
 
 ```text
 ip dhcp pool LAN10
 lease 7
 ```
 
-## Verify DHCP
+## Verify DHCP pools
 
 ```text
 show ip dhcp pool
 ```
 
+## Display DHCP bindings
+
 ```text
 show ip dhcp binding
 ```
+
+## Display DHCP conflicts
 
 ```text
 show ip dhcp conflict
 ```
 
+## Display DHCP-related interface information
+
 ```text
-show ip dhcp server statistics
+show ip interface
 ```
 
 ---
 
 # 15. NAT and PAT
 
-## Configure an Inside Interface
+## Configure the inside interface
 
 ```text
 interface gigabitEthernet 0/0
 ip nat inside
 ```
 
-## Configure an Outside Interface
+## Configure the outside interface
 
 ```text
 interface gigabitEthernet 0/1
@@ -1104,15 +1164,15 @@ ip nat outside
 ip nat inside source static 192.168.1.10 203.0.113.10
 ```
 
-## Dynamic NAT
+## Dynamic NAT pool
 
-Create an ACL identifying inside addresses:
+Create the matching ACL:
 
 ```text
 access-list 1 permit 192.168.1.0 0.0.0.255
 ```
 
-Create a public address pool:
+Create the public pool:
 
 ```text
 ip nat pool PUBLIC 203.0.113.10 203.0.113.20 netmask 255.255.255.0
@@ -1124,32 +1184,26 @@ Connect the ACL to the pool:
 ip nat inside source list 1 pool PUBLIC
 ```
 
-## PAT Using an Address Pool
-
-```text
-access-list 1 permit 192.168.1.0 0.0.0.255
-ip nat pool PUBLIC 203.0.113.10 203.0.113.20 netmask 255.255.255.0
-ip nat inside source list 1 pool PUBLIC overload
-```
-
-## PAT Using the Outside Interface
+## PAT using the outside interface
 
 ```text
 access-list 1 permit 192.168.1.0 0.0.0.255
 ip nat inside source list 1 interface gigabitEthernet 0/1 overload
 ```
 
-## Verify NAT
+## Verify NAT translations
 
 ```text
 show ip nat translations
 ```
 
+## Verify NAT statistics
+
 ```text
 show ip nat statistics
 ```
 
-## Clear NAT Translations
+## Clear NAT translations
 
 ```text
 clear ip nat translation *
@@ -1159,59 +1213,51 @@ clear ip nat translation *
 
 # 16. Access Control Lists
 
-## Standard Numbered ACL
+## Standard numbered ACL
 
 ```text
 access-list 10 permit 192.168.1.0 0.0.0.255
 ```
 
-## Permit a Specific Host
+## Permit a specific host
 
 ```text
 access-list 10 permit host 192.168.1.10
 ```
 
-Equivalent wildcard syntax:
-
-```text
-access-list 10 permit 192.168.1.10 0.0.0.0
-```
-
-## Deny a Network
+## Deny a network
 
 ```text
 access-list 10 deny 192.168.1.0 0.0.0.255
 ```
 
-## Permit Everything
+## Permit everything
 
 ```text
 access-list 10 permit any
 ```
 
-## Deny Everything
+## Deny everything
 
 ```text
 access-list 10 deny any
 ```
 
-> IPv4 ACLs have an implicit deny at the end when no matching permit statement is reached.
-
-## Apply a Standard ACL
+## Apply a standard ACL
 
 ```text
 interface gigabitEthernet 0/0
 ip access-group 10 in
 ```
 
-## Remove an ACL from an Interface
+## Remove an ACL from an interface
 
 ```text
 interface gigabitEthernet 0/0
 no ip access-group 10 in
 ```
 
-## Named Standard ACL
+## Named standard ACL
 
 ```text
 ip access-list standard BLOCK-LAN
@@ -1220,9 +1266,9 @@ permit any
 exit
 ```
 
-## Extended Numbered ACL
+## Extended ACL
 
-Permit all IP traffic from a network:
+Permit all IP traffic:
 
 ```text
 access-list 100 permit ip 192.168.1.0 0.0.0.255 any
@@ -1264,53 +1310,27 @@ Permit ICMP:
 access-list 100 permit icmp 192.168.1.0 0.0.0.255 any
 ```
 
-Deny TCP:
+## Named extended ACL
 
 ```text
-access-list 100 deny tcp 192.168.1.0 0.0.0.255 any
+ip access-list extended WEB-ONLY
+permit tcp 192.168.1.0 0.0.0.255 any eq 80
+permit tcp 192.168.1.0 0.0.0.255 any eq 443
+deny ip any any
+exit
 ```
 
-Permit remaining traffic:
-
-```text
-access-list 100 permit ip any any
-```
-
-## Apply an Extended ACL
+## Apply an extended ACL
 
 ```text
 interface gigabitEthernet 0/0
 ip access-group 100 in
 ```
 
-## Named Extended ACL
+## Remove an ACL
 
 ```text
-ip access-list extended WEB-ACCESS
-permit tcp 192.168.1.0 0.0.0.255 any eq 80
-permit tcp 192.168.1.0 0.0.0.255 any eq 443
-deny ip 192.168.1.0 0.0.0.255 any
-permit ip any any
-exit
-```
-
-## Apply a Named Extended ACL
-
-```text
-interface gigabitEthernet 0/0
-ip access-group WEB-ACCESS in
-```
-
-## Delete a Numbered ACL
-
-```text
-no access-list 10
-```
-
-## Delete a Named ACL
-
-```text
-no ip access-list extended WEB-ACCESS
+no access-list 100
 ```
 
 ## IPv6 ACL
@@ -1319,34 +1339,20 @@ Create the ACL:
 
 ```text
 ipv6 access-list V6-FILTER
-```
-
-Permit IPv6 traffic:
-
-```text
 permit ipv6 2001:DB8:1::/64 any
-```
-
-Permit ICMPv6:
-
-```text
 permit icmp any any
-```
-
-Deny IPv6 traffic:
-
-```text
 deny ipv6 any any
+exit
 ```
 
-Apply the ACL:
+Apply it:
 
 ```text
 interface gigabitEthernet 0/0
 ipv6 traffic-filter V6-FILTER in
 ```
 
-Remove the ACL:
+Remove it:
 
 ```text
 interface gigabitEthernet 0/0
@@ -1367,11 +1373,15 @@ show ip access-lists
 show ipv6 access-list
 ```
 
+```text
+show running-config
+```
+
 ---
 
 # 17. Port Security
 
-## Enable Port Security
+## Enable port security
 
 ```text
 interface gigabitEthernet 0/1
@@ -1379,30 +1389,30 @@ switchport mode access
 switchport port-security
 ```
 
-## Configure Maximum MAC Addresses
+## Limit the number of MAC addresses
 
 ```text
 switchport port-security maximum 2
 ```
 
-## Configure a Static Secure MAC Address
+## Configure a secure MAC address
 
 ```text
 switchport port-security mac-address 0011.2233.4455
 ```
 
-## Enable Sticky MAC Addresses
+## Enable sticky MAC addresses
 
 ```text
 switchport port-security mac-address sticky
 ```
 
-## Configure Violation Mode
+## Configure violation mode
 
-Shutdown:
+Protect:
 
 ```text
-switchport port-security violation shutdown
+switchport port-security violation protect
 ```
 
 Restrict:
@@ -1411,13 +1421,13 @@ Restrict:
 switchport port-security violation restrict
 ```
 
-Protect:
+Shutdown:
 
 ```text
-switchport port-security violation protect
+switchport port-security violation shutdown
 ```
 
-## Verify Port Security
+## Verify port security
 
 ```text
 show port-security
@@ -1427,11 +1437,7 @@ show port-security
 show port-security interface gigabitEthernet 0/1
 ```
 
-```text
-show port-security address
-```
-
-## Recover a Shutdown Port
+## Recover a shutdown port
 
 ```text
 interface gigabitEthernet 0/1
@@ -1443,33 +1449,33 @@ no shutdown
 
 # 18. DHCP Snooping
 
-## Enable DHCP Snooping
+## Enable DHCP snooping
 
 ```text
 ip dhcp snooping
 ```
 
-## Enable DHCP Snooping for a VLAN
+## Enable it for a VLAN
 
 ```text
 ip dhcp snooping vlan 10
 ```
 
-## Trust a DHCP Server-Facing Interface
-
-```text
-interface gigabitEthernet 0/24
-ip dhcp snooping trust
-```
-
-## Rate-Limit DHCP Packets
+## Trust the DHCP server/uplink interface
 
 ```text
 interface gigabitEthernet 0/1
+ip dhcp snooping trust
+```
+
+## Limit DHCP messages on an untrusted port
+
+```text
+interface gigabitEthernet 0/2
 ip dhcp snooping limit rate 10
 ```
 
-## Verify DHCP Snooping
+## Verify DHCP snooping
 
 ```text
 show ip dhcp snooping
@@ -1489,17 +1495,17 @@ show ip dhcp snooping binding
 ip arp inspection vlan 10
 ```
 
-## Trust an Interface
-
-```text
-interface gigabitEthernet 0/24
-ip arp inspection trust
-```
-
-## Rate-Limit ARP Packets
+## Trust an uplink
 
 ```text
 interface gigabitEthernet 0/1
+ip arp inspection trust
+```
+
+## Limit ARP traffic
+
+```text
+interface gigabitEthernet 0/2
 ip arp inspection limit rate 15
 ```
 
@@ -1510,18 +1516,18 @@ show ip arp inspection
 ```
 
 ```text
-show ip arp inspection vlan 10
+show ip arp inspection interfaces
 ```
 
 ```text
-show ip arp inspection interfaces
+show ip arp inspection statistics
 ```
 
 ---
 
 # 20. IPv6 RA Guard
 
-## Enable RA Guard
+## Enable RA Guard on an interface
 
 ```text
 interface gigabitEthernet 0/1
@@ -1535,41 +1541,37 @@ interface gigabitEthernet 0/1
 no ipv6 nd raguard
 ```
 
+> Exact IPv6 RA Guard support and syntax can vary by IOS release and Packet Tracer version.
+
 ---
 
 # 21. SSH
 
-## Configure a Domain Name
+## Configure the domain name
 
 ```text
 ip domain name example.local
 ```
 
-## Create a Local User
+## Create a local user
 
 ```text
 username admin privilege 15 secret MyPassword
 ```
 
-## Generate RSA Keys
+## Generate RSA keys
 
 ```text
-crypto key generate rsa
+crypto key generate rsa modulus 2048
 ```
 
-When prompted for the modulus size, a typical lab configuration is:
-
-```text
-2048
-```
-
-## Enable SSH Version 2
+## Enable SSH version 2
 
 ```text
 ip ssh version 2
 ```
 
-## Configure VTY Lines for Local Authentication
+## Configure VTY lines to use the local database
 
 ```text
 line vty 0 4
@@ -1578,13 +1580,13 @@ transport input ssh
 exit
 ```
 
-## Configure SSH Timeout
+## Configure SSH timeout
 
 ```text
 ip ssh time-out 60
 ```
 
-## Configure SSH Authentication Retries
+## Configure SSH authentication retries
 
 ```text
 ip ssh authentication-retries 3
@@ -1604,9 +1606,7 @@ show users
 show running-config
 ```
 
-## Connect to an SSH Device
-
-From a Cisco IOS device:
+## Connect to another device using SSH
 
 ```text
 ssh -l admin 192.168.1.1
@@ -1622,56 +1622,70 @@ ssh -l admin 192.168.1.1
 aaa new-model
 ```
 
-## Configure Local AAA Authentication
-
-```text
-aaa authentication login default local
-```
-
-## Create a Local User
+## Create a local administrative account
 
 ```text
 username admin privilege 15 secret MyPassword
 ```
 
-## Apply AAA Authentication to VTY Lines
+## Use the local database for login authentication
+
+```text
+aaa authentication login default local
+```
+
+## Apply the AAA method list to VTY lines
 
 ```text
 line vty 0 4
 login authentication default
 ```
 
-> AAA is used for **Authentication, Authorization, and Accounting**. External AAA servers such as RADIUS and TACACS+ are commonly used in larger networks.
+## Local authentication without AAA
+
+```text
+line vty 0 4
+login local
+```
+
+> `login local` uses the local username database. AAA provides a more general authentication, authorization, and accounting framework.
 
 ---
 
 # 23. NTP
 
-## Configure an NTP Client
+## Configure an NTP client
 
 ```text
 ntp server 192.168.1.10
 ```
 
-## Configure the Device as an NTP Master
+## Configure multiple NTP servers
+
+```text
+ntp server 192.168.1.10
+ntp server 192.168.1.11
+```
+
+## Configure a device as an NTP master
 
 ```text
 ntp master 3
 ```
 
-## Display the Clock
+## Verify the clock
 
 ```text
 show clock
 ```
 
-## Verify NTP Status
+## Verify NTP status
 
 ```text
 show ntp status
 ```
 
-## Verify NTP Associations
+## Display NTP associations
 
 ```text
 show ntp associations
@@ -1681,47 +1695,53 @@ show ntp associations
 
 # 24. DNS
 
-## Enable DNS Lookup
+## Enable DNS lookup
 
 ```text
 ip domain lookup
 ```
 
-## Disable DNS Lookup
+## Disable DNS lookup
 
 ```text
 no ip domain lookup
 ```
 
-## Configure a DNS Server
+## Configure a DNS server
 
 ```text
 ip name-server 8.8.8.8
 ```
 
-## Configure Multiple DNS Servers
+Multiple servers:
 
 ```text
 ip name-server 8.8.8.8 1.1.1.1
 ```
 
-## Verify DNS Information
+## Display cached host information
 
 ```text
 show hosts
+```
+
+## Test DNS resolution
+
+```text
+ping example.com
 ```
 
 ---
 
 # 25. Syslog
 
-## Configure a Syslog Server
+## Configure a remote syslog server
 
 ```text
-logging host 192.168.1.100
+logging host 192.168.1.10
 ```
 
-## Configure the Logging Severity
+## Configure the logging severity level
 
 ```text
 logging trap warnings
@@ -1730,29 +1750,29 @@ logging trap warnings
 Common severity levels:
 
 ```text
-0 Emergencies
-1 Alerts
-2 Critical
-3 Errors
-4 Warnings
-5 Notifications
-6 Informational
-7 Debugging
+0 emergencies
+1 alerts
+2 critical
+3 errors
+4 warnings
+5 notifications
+6 informational
+7 debugging
 ```
 
-## Enable Console Logging
+## Configure console logging
 
 ```text
-logging console
+logging console warnings
 ```
 
-## Configure Buffered Logging
+## Configure buffered logging
 
 ```text
-logging buffered
+logging buffered 16384
 ```
 
-## Verify Logging
+## Verify logging
 
 ```text
 show logging
@@ -1762,13 +1782,13 @@ show logging
 
 # 26. SNMP
 
-## Configure a Read-Only Community
+## Configure a read-only SNMP community
 
 ```text
 snmp-server community public ro
 ```
 
-## Configure a Read-Write Community
+## Configure a read-write community
 
 ```text
 snmp-server community private rw
@@ -1780,25 +1800,32 @@ snmp-server community private rw
 show snmp
 ```
 
-> SNMP is commonly used for network monitoring and management.
+> SNMP community strings are credentials. Avoid using simple/default community strings in real production networks.
 
 ---
 
 # 27. TFTP and Configuration Transfer
 
-## Copy Running Configuration to TFTP
+## Copy the running configuration to a TFTP server
 
 ```text
 copy running-config tftp:
 ```
 
-## Copy Startup Configuration to TFTP
+IOS will prompt for:
+
+```text
+Address or name of remote host
+Destination filename
+```
+
+## Copy startup configuration to a TFTP server
 
 ```text
 copy startup-config tftp:
 ```
 
-## Restore Configuration from TFTP
+## Restore a configuration from TFTP
 
 ```text
 copy tftp: running-config
@@ -1810,47 +1837,19 @@ or:
 copy tftp: startup-config
 ```
 
-## Copy a File from Flash to TFTP
+## Copy an IOS image from flash to TFTP
 
 ```text
 copy flash: tftp:
 ```
 
-## Copy a File from TFTP to Flash
+## Copy an IOS image from TFTP to flash
 
 ```text
 copy tftp: flash:
 ```
 
----
-
-# 28. Configuration Management
-
-## Save Running Configuration
-
-```text
-copy running-config startup-config
-```
-
-## Copy Startup Configuration to Running Configuration
-
-```text
-copy startup-config running-config
-```
-
-## Display Running Configuration
-
-```text
-show running-config
-```
-
-## Display Startup Configuration
-
-```text
-show startup-config
-```
-
-## Display Flash Contents
+## Display flash contents
 
 ```text
 show flash:
@@ -1862,148 +1861,92 @@ or:
 dir flash:
 ```
 
-## Display File System Contents
-
-```text
-dir
-```
-
 ---
 
-# 29. Verification Commands
+# 28. Device Verification
 
-## General Device Information
+## General device information
 
 ```text
 show version
 ```
 
-## Running Configuration
+## Running configuration
 
 ```text
 show running-config
 ```
 
-## Startup Configuration
+## Startup configuration
 
 ```text
 show startup-config
 ```
 
-## Interface Summary
+## Interface summary
 
 ```text
 show ip interface brief
 ```
 
-```text
-show ipv6 interface brief
-```
-
-## Detailed Interface Information
+## Detailed interfaces
 
 ```text
 show interfaces
 ```
 
-```text
-show interfaces gigabitEthernet 0/0
-```
-
-## Interface Configuration
-
-```text
-show running-config interface gigabitEthernet 0/0
-```
-
-## VLAN Information
+## VLANs
 
 ```text
 show vlan brief
 ```
 
-```text
-show vlan
-```
-
-## Trunk Information
+## Trunks
 
 ```text
 show interfaces trunk
 ```
 
-## Switchport Information
-
-```text
-show interfaces gigabitEthernet 0/1 switchport
-```
-
-## MAC Address Table
+## MAC address table
 
 ```text
 show mac address-table
 ```
 
-## Display Dynamic MAC Addresses
+## Specific MAC address
 
 ```text
-show mac address-table dynamic
+show mac address-table address 0011.2233.4455
 ```
 
-## Display MAC Addresses for a VLAN
-
-```text
-show mac address-table vlan 10
-```
-
-## Display MAC Addresses on an Interface
-
-```text
-show mac address-table interface gigabitEthernet 0/1
-```
-
-## IPv4 Routing Table
-
-```text
-show ip route
-```
-
-## IPv6 Routing Table
-
-```text
-show ipv6 route
-```
-
-## ARP Table
+## ARP table
 
 ```text
 show ip arp
 ```
 
-## IPv6 Neighbor Table
+## IPv4 routing table
 
 ```text
-show ipv6 neighbors
+show ip route
 ```
 
-## CDP
+## IPv6 routing table
 
 ```text
-show cdp neighbors
+show ipv6 route
 ```
 
+## OSPF neighbors
+
 ```text
-show cdp neighbors detail
+show ip ospf neighbor
 ```
 
-## LLDP
+## OSPF routes
 
 ```text
-show lldp neighbors
-```
-
-```text
-show lldp neighbors detail
+show ip route ospf
 ```
 
 ## EtherChannel
@@ -2018,24 +1961,40 @@ show etherchannel summary
 show spanning-tree
 ```
 
-## OSPF
+## CDP neighbors
 
 ```text
-show ip ospf neighbor
+show cdp neighbors
 ```
 
+## LLDP neighbors
+
 ```text
-show ip route ospf
+show lldp neighbors
 ```
 
-## DHCP
+## Port security
 
 ```text
-show ip dhcp pool
+show port-security
 ```
 
+## DHCP snooping
+
 ```text
-show ip dhcp binding
+show ip dhcp snooping
+```
+
+## DAI
+
+```text
+show ip arp inspection
+```
+
+## ACLs
+
+```text
+show access-lists
 ```
 
 ## NAT
@@ -2048,57 +2007,25 @@ show ip nat translations
 show ip nat statistics
 ```
 
-## ACLs
-
-```text
-show access-lists
-```
-
-```text
-show ip access-lists
-```
-
-```text
-show ipv6 access-list
-```
-
-## Port Security
-
-```text
-show port-security
-```
-
-```text
-show port-security address
-```
-
-## DHCP Snooping
-
-```text
-show ip dhcp snooping
-```
-
-```text
-show ip dhcp snooping binding
-```
-
-## Dynamic ARP Inspection
-
-```text
-show ip arp inspection
-```
-
 ## SSH
 
 ```text
 show ip ssh
 ```
 
-## NTP
+## Users currently connected
 
 ```text
-show clock
+show users
 ```
+
+## Logging
+
+```text
+show logging
+```
+
+## NTP
 
 ```text
 show ntp status
@@ -2108,35 +2035,23 @@ show ntp status
 show ntp associations
 ```
 
-## Syslog
-
-```text
-show logging
-```
-
-## SNMP
-
-```text
-show snmp
-```
-
 ---
 
-# 30. Troubleshooting
+# 29. Troubleshooting
 
-## Test Connectivity
+## Test basic connectivity
 
 ```text
 ping 192.168.1.1
 ```
 
-## Trace a Path
+## Trace the path to a destination
 
 ```text
 traceroute 192.168.1.1
 ```
 
-## Verify Interface Status
+## Check interface status
 
 ```text
 show ip interface brief
@@ -2145,52 +2060,55 @@ show ip interface brief
 Look for:
 
 ```text
-up/up
+up    up
 ```
 
-A common problem state:
+If an interface is:
 
 ```text
-administratively down/down
+administratively down
 ```
 
-usually indicates that the interface is shut down.
-
-## Detailed Interface Troubleshooting
+enable it:
 
 ```text
-show interfaces
+interface gigabitEthernet 0/0
+no shutdown
 ```
+
+## Check detailed interface errors
 
 ```text
 show interfaces gigabitEthernet 0/0
 ```
 
-## Check Interface Configuration
+Useful counters include:
 
-```text
-show running-config interface gigabitEthernet 0/0
-```
+- input errors
+- CRC
+- collisions
+- drops
+- output errors
 
-## Check Switchport Configuration
-
-```text
-show interfaces gigabitEthernet 0/1 switchport
-```
-
-## Check VLAN Membership
+## Check VLAN assignment
 
 ```text
 show vlan brief
 ```
 
-## Check Trunk Status
+## Check trunking
 
 ```text
 show interfaces trunk
 ```
 
-## Check MAC Learning
+## Check switchport configuration
+
+```text
+show interfaces gigabitEthernet 0/1 switchport
+```
+
+## Check MAC addresses
 
 ```text
 show mac address-table
@@ -2202,26 +2120,28 @@ show mac address-table
 show ip arp
 ```
 
-## Check IPv6 Neighbors
-
-```text
-show ipv6 neighbors
-```
-
-## Check Routing
+## Check routing
 
 ```text
 show ip route
 ```
 
+## Check IPv6 routing
+
 ```text
 show ipv6 route
 ```
 
-## Check OSPF Neighbors
+## Check OSPF neighbors
 
 ```text
 show ip ospf neighbor
+```
+
+## Check OSPF configuration
+
+```text
+show ip protocols
 ```
 
 ## Check EtherChannel
@@ -2230,47 +2150,67 @@ show ip ospf neighbor
 show etherchannel summary
 ```
 
+Look for correctly bundled ports.
+
 ## Check STP
 
 ```text
 show spanning-tree
 ```
 
-## Check ACL Counters
+## Check ACLs
 
 ```text
 show access-lists
 ```
 
-## Clear ARP Cache
+## Check ACL application
+
+```text
+show running-config interface gigabitEthernet 0/0
+```
+
+## Check NAT
+
+```text
+show ip nat translations
+```
+
+```text
+show ip nat statistics
+```
+
+## Clear ARP cache
 
 ```text
 clear arp-cache
 ```
 
-## Clear Interface Counters
+## Clear interface counters
 
 ```text
 clear counters
 ```
 
-## Reset an Interface
+## Reset an interface
 
 ```text
-interface gigabitEthernet 0/1
+interface gigabitEthernet 0/0
 shutdown
 no shutdown
 ```
 
-## Reset an Interface to Defaults
+## Reset an interface configuration
 
 ```text
-default interface gigabitEthernet 0/1
+default interface gigabitEthernet 0/0
 ```
+
+> Be careful with `default interface` because it removes the interface's current configuration.
 
 ---
 
-# 31. Common Configuration Workflows
+# 30. Common Configuration Workflows
 
 ## Basic Router Configuration
 
@@ -2279,20 +2219,26 @@ enable
 configure terminal
 
 hostname R1
-
-enable secret MyPassword
-
 no ip domain lookup
+enable secret MySecretPassword
 
 interface gigabitEthernet 0/0
 description LAN
 ip address 192.168.1.1 255.255.255.0
 no shutdown
+exit
+
+interface gigabitEthernet 0/1
+description WAN
+ip address 10.0.0.1 255.255.255.252
+no shutdown
+exit
 
 end
-
 copy running-config startup-config
 ```
+
+---
 
 ## Basic Layer 2 Switch Configuration
 
@@ -2301,8 +2247,8 @@ enable
 configure terminal
 
 hostname SW1
-
-enable secret MyPassword
+no ip domain lookup
+enable secret MySecretPassword
 
 vlan 10
 name USERS
@@ -2311,43 +2257,68 @@ exit
 interface range gigabitEthernet 0/1-10
 switchport mode access
 switchport access vlan 10
-no shutdown
+spanning-tree portfast
+spanning-tree bpduguard enable
+exit
 
 end
-
 copy running-config startup-config
 ```
 
-## Basic Trunk Configuration
+---
+
+## Trunk Configuration
+
+Switch 1:
 
 ```text
 enable
 configure terminal
 
-interface gigabitEthernet 0/24
+interface gigabitEthernet 0/1
 switchport mode trunk
 switchport trunk allowed vlan 10,20,30
-no shutdown
+exit
 
 end
-
 copy running-config startup-config
 ```
 
-## Basic SSH Configuration
+Switch 2:
+
+```text
+enable
+configure terminal
+
+interface gigabitEthernet 0/1
+switchport mode trunk
+switchport trunk allowed vlan 10,20,30
+exit
+
+end
+copy running-config startup-config
+```
+
+Verify:
+
+```text
+show interfaces trunk
+```
+
+---
+
+## SSH Configuration
 
 ```text
 enable
 configure terminal
 
 hostname R1
-
 ip domain name example.local
 
 username admin privilege 15 secret MyPassword
 
-crypto key generate rsa
-
+crypto key generate rsa modulus 2048
 ip ssh version 2
 
 line vty 0 4
@@ -2356,11 +2327,20 @@ transport input ssh
 exit
 
 end
-
 copy running-config startup-config
 ```
 
-## Basic OSPF Configuration
+Test:
+
+```text
+ssh -l admin 192.168.1.1
+```
+
+---
+
+## OSPF Configuration
+
+Router 1:
 
 ```text
 enable
@@ -2370,6 +2350,22 @@ router ospf 1
 router-id 1.1.1.1
 network 192.168.1.0 0.0.0.255 area 0
 network 10.0.0.0 0.0.0.3 area 0
+exit
+
+end
+```
+
+Router 2:
+
+```text
+enable
+configure terminal
+
+router ospf 1
+router-id 2.2.2.2
+network 192.168.2.0 0.0.0.255 area 0
+network 10.0.0.0 0.0.0.3 area 0
+exit
 
 end
 ```
@@ -2381,25 +2377,34 @@ show ip ospf neighbor
 show ip route ospf
 ```
 
-## Basic NAT/PAT Configuration
+---
+
+## NAT/PAT Configuration
+
+Inside interface:
 
 ```text
-enable
-configure terminal
-
-access-list 1 permit 192.168.1.0 0.0.0.255
-
 interface gigabitEthernet 0/0
 ip nat inside
-exit
+```
 
+Outside interface:
+
+```text
 interface gigabitEthernet 0/1
 ip nat outside
-exit
+```
 
+Create the matching ACL:
+
+```text
+access-list 1 permit 192.168.1.0 0.0.0.255
+```
+
+Enable PAT:
+
+```text
 ip nat inside source list 1 interface gigabitEthernet 0/1 overload
-
-end
 ```
 
 Verify:
@@ -2409,7 +2414,9 @@ show ip nat translations
 show ip nat statistics
 ```
 
-## Basic Port Security Configuration
+---
+
+## Port Security Configuration
 
 ```text
 enable
@@ -2422,8 +2429,10 @@ switchport port-security
 switchport port-security maximum 2
 switchport port-security mac-address sticky
 switchport port-security violation restrict
+exit
 
 end
+copy running-config startup-config
 ```
 
 Verify:
@@ -2434,16 +2443,19 @@ show port-security interface gigabitEthernet 0/1
 
 ---
 
-# Quick Reference
+# 31. Quick Reference
 
-## Enter Configuration Mode
+## Modes
 
 ```text
 enable
 configure terminal
+interface g0/0
+exit
+end
 ```
 
-## Save Configuration
+## Save
 
 ```text
 copy running-config startup-config
@@ -2452,20 +2464,9 @@ copy running-config startup-config
 ## Interface
 
 ```text
-interface gigabitEthernet 0/0
-no shutdown
-```
-
-## IPv4
-
-```text
+interface g0/0
 ip address 192.168.1.1 255.255.255.0
-```
-
-## IPv6
-
-```text
-ipv6 address 2001:DB8:1::1/64
+no shutdown
 ```
 
 ## VLAN
@@ -2475,9 +2476,10 @@ vlan 10
 name USERS
 ```
 
-## Access Port
+## Access port
 
 ```text
+interface g0/1
 switchport mode access
 switchport access vlan 10
 ```
@@ -2485,19 +2487,28 @@ switchport access vlan 10
 ## Trunk
 
 ```text
+interface g0/1
 switchport mode trunk
 ```
 
-## Static Route
+## Router-on-a-Stick
 
 ```text
-ip route 0.0.0.0 0.0.0.0 10.0.0.1
+interface g0/0.10
+encapsulation dot1Q 10
+ip address 192.168.10.1 255.255.255.0
 ```
 
-## IPv6 Default Route
+## Static route
 
 ```text
-ipv6 route ::/0 2001:DB8:1::1
+ip route 192.168.20.0 255.255.255.0 10.0.0.2
+```
+
+## Default route
+
+```text
+ip route 0.0.0.0 0.0.0.0 10.0.0.2
 ```
 
 ## OSPF
@@ -2507,40 +2518,46 @@ router ospf 1
 network 192.168.1.0 0.0.0.255 area 0
 ```
 
-## DHCP Relay
+## DHCP relay
 
 ```text
+interface g0/0
 ip helper-address 192.168.1.10
 ```
 
 ## NAT/PAT
 
 ```text
-ip nat inside source list 1 interface gigabitEthernet 0/1 overload
+ip nat inside
+ip nat outside
+ip nat inside source list 1 interface g0/1 overload
 ```
 
-## ACL
+## Standard ACL
 
 ```text
 access-list 10 permit 192.168.1.0 0.0.0.255
 ```
 
-## SSH
+## Extended ACL
 
 ```text
-ip ssh version 2
+access-list 100 permit tcp 192.168.1.0 0.0.0.255 any eq 443
 ```
 
 ## Port Security
 
 ```text
 switchport port-security
+switchport port-security maximum 2
+switchport port-security mac-address sticky
 ```
 
 ## DHCP Snooping
 
 ```text
 ip dhcp snooping
+ip dhcp snooping vlan 10
 ```
 
 ## DAI
@@ -2549,43 +2566,48 @@ ip dhcp snooping
 ip arp inspection vlan 10
 ```
 
-## NTP
+## SSH
 
 ```text
-ntp server 192.168.1.10
+ip domain name example.local
+username admin privilege 15 secret MyPassword
+crypto key generate rsa modulus 2048
+ip ssh version 2
+line vty 0 4
+login local
+transport input ssh
 ```
 
-## Most Useful Verification Commands
+## Verification
 
 ```text
-show running-config
 show ip interface brief
-show ipv6 interface brief
+show running-config
 show vlan brief
 show interfaces trunk
 show mac address-table
+show ip arp
 show ip route
 show ipv6 route
 show ip ospf neighbor
 show etherchannel summary
 show spanning-tree
 show access-lists
+show ip nat translations
 show port-security
 show ip dhcp snooping
 show ip arp inspection
 show ip ssh
+show logging
+show ntp status
 ```
 
 ---
 
-## Notes
+# Notes
 
-- Replace example IP addresses, VLAN IDs, interfaces, usernames, passwords, and hostnames with values appropriate for your topology.
-- Cisco IOS syntax can vary between device models and IOS versions.
-- Packet Tracer does not implement every feature available on physical Cisco equipment.
-- Some commands may require a specific device model or IOS feature set.
-- This reference is intended for **CCNA study, Cisco Packet Tracer labs, networking practice, and practical Cisco IOS reference**.
-
----
-
-**CCNA 200-301 v1.1 — Cisco Configuration Commands**
+- Cisco IOS syntax can vary between IOS, IOS XE, switch/router models, and Packet Tracer versions.
+- Interface names such as `g0/0`, `g0/1`, `fa0/1`, and `s0/0/0` depend on the device model.
+- Always verify the available syntax with `?` on the actual device.
+- Commands that modify routing, security, NAT, ACLs, STP, or interface configuration should be tested carefully before using them on production equipment.
+- This file is intended as a practical CCNA-level Cisco IOS / Packet Tracer reference, not an exhaustive Cisco IOS command encyclopedia.
